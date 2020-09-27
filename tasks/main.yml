@@ -1,0 +1,41 @@
+---
+# tasks file for paultaiton.github_clone
+- name: openssh keypair
+  openssh_keypair:
+    path: "~/.ssh/id_ed25519"
+    type: ed25519
+  register: keygen
+
+- name: github notification debug
+  debug:
+    msg: "You will need to copy the public key to github to proceed.\n{{ keygen.public_key }}"
+  when: github_token is not defined
+
+- name: github key
+  github_key:
+    name: "{{ github_keyname | default(ansible_facts.hostname + '_githubclone' ) }}"
+    pubkey: "{{ keygen.public_key }}"
+    token: "{{ github_token }}"
+    state: present
+    force: yes
+  delegate_to: localhost
+  when: github_token is defined
+
+- name: configure github global parameters.
+  git_config:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    scope: global
+    state: present
+  loop:
+    - name:  "user.email"
+      value: "{{ git_email }}"
+    - name:  "user.name"
+      value: "{{ git_name }}"
+
+- name: clone repository and configure local.
+  include_tasks: clone.yml
+  loop: "{{ github_repositories }}"
+  loop_control:
+    loop_var: github_repository
+

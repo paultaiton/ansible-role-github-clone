@@ -1,0 +1,5 @@
+---
+# defaults file for paultaiton.github_clone
+# username: "{{ ansible_user }}"
+# github_username: # Must be defined for your repos' namespace.
+
