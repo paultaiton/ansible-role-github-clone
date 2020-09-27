@@ -1,0 +1,41 @@
+---
+- name: clone repo
+  git:
+    accept_hostkey: yes
+    repo: "git@github.com:{{ github_username }}/{{ github_repository.repo_name }}.git"
+    dest: "{{ github_repository.filesystem_location }}"
+
+- name: configure upstream
+  git_config:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    scope: local
+    state: present
+    repo: "{{ github_repository.filesystem_location }}"
+  loop:
+    - name:  "remote.upstream.url"
+      value: "https://github.com/ansible-collections/azure.git"
+    - name:  "remote.upstream.fetch"
+      value: "+refs/heads/*:refs/remotes/upstream/*"
+
+- name: python requirements.yml
+  stat:
+    path: "{{ github_repository.filesystem_location }}/{{ github_repository.pip_requirements_relative_path }}"
+  register: python_requirements_file
+  when: github_repository.project_type == 'python'
+
+- name: python project pip requirements
+  pip:
+    requirements: "{{ python_requirements_file.stat.path }}"
+    virtualenv: "{{ github_repository.virtualenv }}"
+    virtualenv_command: "{{ ansible_facts.python.executable }} -m venv "
+  when: github_repository.project_type == 'python' and python_requirements_file.stat.path is defined
+
+- name: python project extra requirements
+  pip:
+    name: "{{ github_repository.pip_extra_packages }}"
+    requirements: "{{ item.requirements | default(omit) }}"
+    virtualenv: "{{ github_repository.virtualenv }}"
+    virtualenv_command: "{{ ansible_facts.python.executable }} -m venv "
+  when: github_repository.project_type == 'python' and github_repository.pip_extra_packages is defined
+
