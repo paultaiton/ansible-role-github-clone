@@ -20,22 +20,21 @@
 
 - name: python requirements.yml
   stat:
-    path: "{{ github_repository.filesystem_location }}/{{ github_repository.pip_requirements_relative_path }}"
+    path: "{{ github_repository.filesystem_location }}/{{ github_repository.pip_requirements_relative_path | default('requirements.yml') }}"
   register: python_requirements_file
   when: github_repository.project_type == 'python'
 
 - name: python project pip requirements
   pip:
     requirements: "{{ python_requirements_file.stat.path }}"
-    virtualenv: "{{ github_repository.virtualenv }}"
+    virtualenv: "{{ github_repository.virtualenv | default(omit) }}"
     virtualenv_command: "{{ ansible_facts.python.executable }} -m venv "
   when: github_repository.project_type == 'python' and python_requirements_file.stat.path is defined
 
 - name: python project extra requirements
   pip:
     name: "{{ github_repository.pip_extra_packages }}"
-    requirements: "{{ item.requirements | default(omit) }}"
-    virtualenv: "{{ github_repository.virtualenv }}"
+    virtualenv: "{{ github_repository.virtualenv | default(omit) }}"
     virtualenv_command: "{{ ansible_facts.python.executable }} -m venv "
   when: github_repository.project_type == 'python' and github_repository.pip_extra_packages is defined
 
