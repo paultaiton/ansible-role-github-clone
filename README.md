@@ -18,6 +18,8 @@ Role Variables
     git_email: paul@example.com
 
     # What defines repo parameters to clone and configure locally.
+    # Example here is for https://github.com/paultaiton/azure
+    # Forked from upstream https://github.com/ansible-collections/azure
     github_repositories:
       - repo_name: azure  # This will be in github_username  namespace.
         filesystem_location: # example "~/.ansible/collections/ansible_collections/azure/azcollection"
