@@ -9,12 +9,15 @@ Requirements
 Role Variables
 --------------
 
+    # How to connect to github.
 		github_username: # github.com user name
 		github_token:    # an optional token in github for adding an ssh key. Can be omitted.
 
-		git_name: Paul Aiton
+    # To pass to git config
+		git_name: Paul Aiton        
 		git_email: paul@example.com
 
+    # What defines repo parameters to clone and configure locally.
 		github_repositories:
 			- repo_name: azure  # This will be in github_username  namespace.
 				filesystem_location: # example "~/.ansible/collections/ansible_collections/azure/azcollection"
