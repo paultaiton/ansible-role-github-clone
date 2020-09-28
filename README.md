@@ -14,12 +14,14 @@ Dependencies
 Example Playbook
 ----------------
 
-    - name: github_clone paultaiton.azcollection
-		  hosts: servers
-			vars:
-			  github_repositories:
-      roles:
-         - paultaiton.github_clone
+```
+  - name: github_clone paultaiton.azcollection
+	  hosts: servers
+		vars:
+		  github_repositories:
+    roles:
+       - paultaiton.github_clone
+```
 
 License
 -------
