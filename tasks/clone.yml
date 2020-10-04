@@ -14,9 +14,10 @@
     repo: "{{ github_repository.filesystem_location }}"
   loop:
     - name:  "remote.upstream.url"
-      value: "https://github.com/ansible-collections/azure.git"
+      value: "https://github.com/{{ github_repository.upstream_name }}/{{ github_repository.repo_name }}.git"
     - name:  "remote.upstream.fetch"
       value: "+refs/heads/*:refs/remotes/upstream/*"
+  when: github_repository.upstream_name is defined
 
 - name: python requirements.yml
   stat:
