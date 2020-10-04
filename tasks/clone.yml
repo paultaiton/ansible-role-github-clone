@@ -26,6 +26,7 @@
 
 - name: python project pip requirements
   pip:
+    extra_args: "{{ github_repository.pip_virtualenv_path is defined | ternary(omit, '--user ') }}"
     requirements: "{{ python_requirements_file.stat.path }}"
     virtualenv: "{{ github_repository.pip_virtualenv_path | default(omit) }}"
     virtualenv_command: "{{ ansible_facts.python.executable }} -m venv "
@@ -33,6 +34,7 @@
 
 - name: python project extra requirements
   pip:
+    extra_args: "{{ github_repository.pip_virtualenv_path is defined | ternary(omit, '--user ') }}"
     name: "{{ github_repository.pip_extra_packages }}"
     virtualenv: "{{ github_repository.pip_virtualenv_path | default(omit) }}"
     virtualenv_command: "{{ ansible_facts.python.executable }} -m venv "
