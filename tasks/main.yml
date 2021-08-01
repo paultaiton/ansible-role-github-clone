@@ -1,7 +1,7 @@
 ---
 # tasks file for paultaiton.github_clone
 - name: openssh keypair
-  openssh_keypair:
+  community.crypto.openssh_keypair:
     path: "~/.ssh/id_ed25519"
     type: ed25519
   register: keygen
@@ -12,7 +12,7 @@
   when: github_token is not defined
 
 - name: github key
-  github_key:
+  community.general.github_key:
     name: "{{ github_keyname | default(ansible_facts.hostname + '_githubclone' ) }}"
     pubkey: "{{ keygen.public_key }}"
     token: "{{ github_token }}"
@@ -22,7 +22,7 @@
   when: github_token is defined
 
 - name: configure github global parameters.
-  git_config:
+  community.general.git_config:
     name: "{{ item.name }}"
     value: "{{ item.value }}"
     scope: global
@@ -38,4 +38,3 @@
   loop: "{{ github_repositories }}"
   loop_control:
     loop_var: github_repository
-
